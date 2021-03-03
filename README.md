@@ -1,6 +1,6 @@
 # Binance Integration
 
-This repo consists of a few scripts to track the evolution of our binance account where we hold several altcoins.
+This repo consists of a few scripts that tracks the evolution of our binance account where we hold several altcoins.
 
 ### In order to run:
 
@@ -10,6 +10,8 @@ You must have locally a file called `config.py` that contains the Binance `apiKe
 apiKey = <your_key_as_a_string>
 apiSecurity = <your_security_key_as_a_string>
 ```
+
+## List of scripts:
 
 ## getAltsPortfolio.py
 
