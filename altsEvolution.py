@@ -5,6 +5,8 @@ from datetime import datetime
 # Define the csv file to write/read
 csv_filename = './data/daily_alts_value.csv'
 
+# Set fontsize of labels
+label_fontsize = 14
 
 x = []
 y = []
@@ -19,11 +21,25 @@ with open(csv_filename, 'r') as file:
             x.append(date_time_obj)
             y.append(float(row[1]))
 
+alts_roi = []
+for i in range(len(y)):
+    alts_roi.append(y[i]/y[0]-1)
+
 # Plot alts value historical evolution
 
-plt.plot(x,y)
-plt.xlabel('Date')
-plt.ylabel('BTC')
-plt.title('Altcoins evolution in BTC terms')
+fig, ax1 = plt.subplots()
+
+ax1.set_xlabel('Date', fontsize=label_fontsize)
+ax1.set_ylabel('BTC', fontsize=label_fontsize)
+ax1.plot(x, y, color='tab:blue')
+
 plt.grid()
+
+ax2 = ax1.twinx()
+ax2.set_ylabel('extra BTC return since 08/01/21 (%)', fontsize=label_fontsize)
+ax2.plot(x, alts_roi, color='tab:blue')
+
+fig.tight_layout()
+plt.title('Altcoins evolution in BTC terms', fontsize=label_fontsize)
+
 plt.show()

@@ -20,7 +20,7 @@ coin_name = []
 coin_quant = []
 for i in range(len(all_assets)):
     coin_name.append(all_assets[i]['asset'])
-    coin_quant.append(float(all_assets[i]['free']))
+    coin_quant.append(float(all_assets[i]['free'])+float(all_assets[i]['locked']))
 
 # Get all coins names and quantities that client owns (i.e. coin_quant > 0.0)
 owned_coin_name = []
@@ -35,28 +35,33 @@ for i in range(len(coin_name)):
 
 # Create array of coin and pair (BTC)
 owned_coin_symbol_pair = []
-for i in range(1,len(owned_coin_name)):
+for i in range(0,len(owned_coin_name)):
     owned_coin_symbol_pair.append(owned_coin_name[i] + 'BTC')
+
+if owned_coin_name[0] == 'BTC':
+    owned_coin_symbol_pair.pop(0)
     
 # Get price in BTC
 price = []
 for i in range(len(owned_coin_symbol_pair)):
     price.append(float(client.get_avg_price(symbol=owned_coin_symbol_pair[i])['price'])) 
 
-# Get owned coins value in BTC terms
 
-BTC_quant = owned_coin_quant[0]
-owned_coin_quant.pop(0)     # First item is BTC, it is already in BTC terms.
+if owned_coin_name[0] == 'BTC':
+    owned_coin_quant.pop(0)     # First item is BTC, it is already in BTC terms.
+
+# Get owned coins value in BTC terms
 owned_coin_BTC_value = []
 for num1, num2 in zip(owned_coin_quant, price):
     owned_coin_BTC_value.append(num1 * num2)
 
-owned_coin_BTC_value.insert(0,BTC_quant) # Add the quantity of owned BTC
+if owned_coin_name[0] == 'BTC':
+    BTC_quant = owned_coin_quant[0]
+    owned_coin_BTC_value.insert(0,BTC_quant)
 
 
 total_value_BTC_terms = np.sum(owned_coin_BTC_value)    # Get the sum of all coins in BTC terms
 percentage = np.multiply(owned_coin_BTC_value, total_value_BTC_terms)   # Get the percentage of each coin over the total value
-
 # Get today's date
 from datetime import datetime
 today = datetime.today().strftime('%Y-%m-%d')
@@ -72,33 +77,9 @@ from csv import writer
 
 # Define a function to append a row to an existing csv file
 def append_alts_value(file_name, row_to_append):
-    with open(file_name, 'a+', newline='') as write_obj:
+    with open(file_name, 'a', newline='') as write_obj:
         csv_writer = writer(write_obj)
         csv_writer.writerow(row_to_append)
 
 # Use the function to append today_row that contains today's date and today's total alts value in BTC
 append_alts_value(csv_filename, today_row)
-
-
-# Plot alts distro
-labels = owned_coin_name
-sizes = np.multiply(percentage, 100)
-
-fig1, ax1 = plt.subplots()
-ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
-        shadow=False, startangle=90)
-ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-
-plt.show()
-
-
-x = []
-y = []
-# Read daily_alts_value.csv file and assign the first column (dates) to x, and second column (values) to y, excepting the header.
-with open(csv_filename, 'r') as file:
-    reader = csv.reader(file)
-    header = next(reader)
-    if header != None:
-        for row in reader:
-            x.append(row[0])
-            y.append(row[1])
