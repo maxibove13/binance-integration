@@ -36,7 +36,7 @@ ax1.plot(x, y, color='tab:blue')
 plt.grid()
 
 ax2 = ax1.twinx()
-ax2.set_ylabel('extra BTC return since 08/01/21 (%)', fontsize=label_fontsize)
+ax2.set_ylabel('extra BTC return since 08/01/21', fontsize=label_fontsize)
 ax2.plot(x, alts_roi, color='tab:blue')
 
 fig.tight_layout()

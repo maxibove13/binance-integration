@@ -72,6 +72,16 @@ today_row = [today, total_value_BTC_terms]
 # Define the csv file to write/read
 csv_filename = './data/daily_alts_value.csv'
 
+x = []
+# Read daily_alts_value.csv file and assign the first column (dates) to x, and second column (values) to y, excepting the header.
+with open(csv_filename, 'r') as file:
+    reader = csv.reader(file)
+    header = next(reader)
+    if header != None:
+        for row in reader:
+            date_time_str = row[0]
+            x.append(date_time_str)
+
 # Import csv's writer
 from csv import writer
 
@@ -81,5 +91,6 @@ def append_alts_value(file_name, row_to_append):
         csv_writer = writer(write_obj)
         csv_writer.writerow(row_to_append)
 
-# Use the function to append today_row that contains today's date and today's total alts value in BTC
-append_alts_value(csv_filename, today_row)
+# If it hasn't been updated today, append today's value:
+if x[len(x)-1] != today:
+    append_alts_value(csv_filename, today_row)
