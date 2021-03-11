@@ -47,17 +47,14 @@ for i in range(len(owned_coin_symbol_pair)):
     price.append(float(client.get_avg_price(symbol=owned_coin_symbol_pair[i])['price'])) 
 
 
+# Add BTC price in BTC terms:
 if owned_coin_name[0] == 'BTC':
-    owned_coin_quant.pop(0)     # First item is BTC, it is already in BTC terms.
+    price.insert(0,1)
 
 # Get owned coins value in BTC terms
 owned_coin_BTC_value = []
 for num1, num2 in zip(owned_coin_quant, price):
     owned_coin_BTC_value.append(num1 * num2)
-
-if owned_coin_name[0] == 'BTC':
-    BTC_quant = owned_coin_quant[0]
-    owned_coin_BTC_value.insert(0,BTC_quant)
 
 
 total_value_BTC_terms = np.sum(owned_coin_BTC_value)    # Get the sum of all coins in BTC terms

@@ -1,11 +1,11 @@
 # Get dependencies
 from binance.client import Client
-import csv
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 import config
-import functools 
+
+# Close all previous figures
+plt.close('all')
 
 # Define the client
 client = Client(config.apiKey, config.apiSecurity)
@@ -44,50 +44,80 @@ if owned_coin_name[0] == 'BTC':
 # Get price in BTC
 price = []
 for i in range(len(owned_coin_symbol_pair)):
-    price.append(float(client.get_avg_price(symbol=owned_coin_symbol_pair[i])['price'])) 
+    price.append(float(client.get_avg_price(symbol=owned_coin_symbol_pair[i])['price']))
+    
+# Get BTC/USD price
+BTC_USD = int(float(client.get_avg_price(symbol='BTCTUSD')['price']))
 
 
+# Add BTC price in BTC terms:
 if owned_coin_name[0] == 'BTC':
-    owned_coin_quant.pop(0)     # First item is BTC, it is already in BTC terms.
+    price.insert(0,1)
 
 # Get owned coins value in BTC terms
 owned_coin_BTC_value = []
 for num1, num2 in zip(owned_coin_quant, price):
     owned_coin_BTC_value.append(num1 * num2)
 
-if owned_coin_name[0] == 'BTC':
-    BTC_quant = owned_coin_quant[0]
-    owned_coin_BTC_value.insert(0,BTC_quant)
+
+total_value_BTC_terms_alts = np.sum(owned_coin_BTC_value)    # Get the sum of all coins in BTC terms
+percentage_alts = np.multiply(owned_coin_BTC_value, total_value_BTC_terms_alts)   # Get the percentage of each coin over the total value
+
+# define labels and sizes for alts distro
+labels_alts = owned_coin_name
+sizes_alts = np.multiply(percentage_alts, 100)
 
 
-total_value_BTC_terms = np.sum(owned_coin_BTC_value)    # Get the sum of all coins in BTC terms
-percentage = np.multiply(owned_coin_BTC_value, total_value_BTC_terms)   # Get the percentage of each coin over the total value
+# Add the blockfi assets
+labels = labels_alts
+    
+# If BTC isn't already in the binance portfolio insert it to labels and to owned_coins:
+if 'BTC' not in labels:
+    labels.insert(0,'BTC')
+    owned_coin_BTC_value.insert(0, 0) # later we will sum the actual size 
+    
+# If ETH isn't already in the binance portfolio insert it to labels and to owned_coins:
+if 'ETH' not in labels:
+    labels.insert(1,'ETH')
+    owned_coin_BTC_value.insert(1, 0) # later we will sum the actual size 
+    
+# Total BTC & ETH hedl in blockfi:
+blockfi_BTC = 1.11549771
+blockfi_ETH = 11.39
 
-# Plot alts distro
-labels = owned_coin_name
+# total blockfi ETH in BTC terms:
+blockfi_ETH_BTC_terms = blockfi_ETH*price[labels.index('ETH')]
+
+# Total crypto value hedl in portfolio in BTC terms:
+total_value_BTC_terms = total_value_BTC_terms_alts + blockfi_BTC + blockfi_ETH_BTC_terms
+
+# Add the ETH & BTC blockfi value in BTC:
+owned_coin_BTC_value[0] = blockfi_BTC
+owned_coin_BTC_value[1] = blockfi_ETH_BTC_terms
+
+# get the percentage of each hedl coin:
+percentage = np.multiply(owned_coin_BTC_value, total_value_BTC_terms)
 sizes = np.multiply(percentage, 100)
 
-fig1, ax1 = plt.subplots()
-ax1.pie(sizes, labels=labels, autopct='%1.1f%%',
+
+
+    
+
+# Plot the pie charts
+
+fig, axs = plt.subplots(1, 2) # define the plot
+
+# set the first subplot (total distro)
+axs[0].pie(sizes, labels=labels, autopct='%1.1f%%',
         shadow=False, startangle=90)
-ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+axs[0].axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+axs[0].set_title('Portfolio distribution')
 
+# set the second subplot (alts distro)
+axs[1].pie(sizes_alts, labels=labels_alts, autopct='%1.1f%%',
+        shadow=False, startangle=90)
+axs[1].axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+axs[1].set_title('Altcoins distribution')
+
+fig.suptitle(f'Currently HODLing: %1.4f BTC \n @ {BTC_USD} BTC/USD' %total_value_BTC_terms, fontsize=16)
 plt.show()
-
-
-# x = []
-# y = []
-# # Read daily_alts_value.csv file and assign the first column (dates) to x, and second column (values) to y, excepting the header.
-# with open(csv_filename, 'r') as file:
-#     reader = csv.reader(file)
-#     header = next(reader)
-#     if header != None:
-#         for row in reader:
-#             x.append(row[0])
-#             y.append(row[1])
-
-# # Plot alts value historical evolution
-
-# plt.plot(x,y)
-# plt.grid()
-# plt.show()
