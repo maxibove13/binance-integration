@@ -16,9 +16,9 @@ eth_blockfi = 11.39
 csv_filename_alts_evol = './data/daily_alts_value.csv'
 
 # SETTINGS
-plot_portfolio = 0      # Select whether to plot portfolio or not
-plot_alts_evol = 0      # Plot alts evolution in BTC
-append_data = 1         # Select whether to append data to sheet or not
+plot_portfolio = 1      # Select whether to plot portfolio or not
+plot_alts_evol = 1      # Plot alts evolution in BTC
+append_data = 0         # Select whether to append data to sheet or not
 append_local_csv = 0    # Select whether to append total BTC value in binance to local .csv file
 
 
