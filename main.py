@@ -19,7 +19,7 @@ csv_filename_alts_evol = './data/daily_alts_value.csv'
 plot_portfolio = 1      # Select whether to plot portfolio or not
 plot_alts_evol = 1      # Plot alts evolution in BTC
 append_data = 0         # Select whether to append data to sheet or not
-append_local_csv = 0    # Select whether to append total BTC value in binance to local .csv file
+append_local_csv = 1    # Select whether to append total BTC value in binance to local .csv file
 
 
 # Get blockfi_btc_usd, blockfi_eth_usd, binance_usd, btc_usd
