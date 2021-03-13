@@ -2,10 +2,7 @@
 from binance.client import Client
 import csv
 import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
 import config
-import functools 
 
 # Define the client
 client = Client(config.apiKey, config.apiSecurity)
