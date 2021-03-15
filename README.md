@@ -9,7 +9,8 @@ You must have locally a file called `config.py` that contains the Binance `apiKe
 ```
 apiKey = <your_key_as_a_string>
 apiSecurity = <your_security_key_as_a_string>
-```
+
+Also, a json file containing the google drive & google sheets API credentials is needed.
 
 ## List of scripts:
 
@@ -35,3 +36,7 @@ Then that data is plot to know the historical evolution of the altcoins in BTC t
 ## getBinandeData.py
 
 Function that manage binance connection and gives you several data like price of btc, eth, total binance value, value for each coin, etc.
+
+## scheduler.py
+
+File to run main function every day.
