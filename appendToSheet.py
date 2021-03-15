@@ -12,7 +12,6 @@ def appendToSheet(google_creds_json, today_data):
     from pprint import pprint
     from datetime import datetime
     
-    
     scope = ["https://spreadsheets.google.com/feeds",'https://www.googleapis.com/auth/spreadsheets',"https://www.googleapis.com/auth/drive.file","https://www.googleapis.com/auth/drive"]
     
     # Define your credentials
@@ -20,7 +19,7 @@ def appendToSheet(google_creds_json, today_data):
     client = gspread.authorize(creds)
     
     # Open your sheet
-    sheet = client.open("main_balance_&_performance")
+    sheet = client.open_by_key('1MZaJhVrIG6_3B3AL1wmzn-dX2L7IKzYEmMwuCSwCgC8')
     
     # Define your worksheet
     worksheet = sheet.worksheet('Performance')
@@ -63,7 +62,7 @@ def appendToSheet(google_creds_json, today_data):
     
     # Get today's date
     today = datetime.today().strftime('%m/%d/%Y').lstrip("0").replace(" 0", " ")
-
+    
     # Insert the new row if today's data is not already appended 
     # (use insert_row if you want to choose where to insert it)
     if worksheet.cell(next_row-1,1).value != today:
@@ -71,4 +70,4 @@ def appendToSheet(google_creds_json, today_data):
         # Format the selected columns
         worksheet.format('D', {'textFormat': {'bold': True}})
         worksheet.format('G', {'textFormat': {'bold': True}})
-
+    
